@@ -276,7 +276,7 @@
                             <a href="forms.html"><i class="fa fa-map-marker fa-fw"></i> Real-time Map</a>
                         </li>
                         <li>
-                            <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
+                            <a href="#"><i class="fa fa-table fa-fw"></i> Tables</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-cog fa-fw"></i> Analytics<span class="fa arrow"></span></a>
@@ -309,22 +309,7 @@
             </div>
             <!-- /.row -->
             <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <i class="fa fa-phone-square fa-5x"></i>
-                                </div>
-                                <div class="col-xs-9 text-right">
-                                    <div id="current-calls" class="huge">0</div>
-                                    <div>Current Calls</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-green">
                         <div class="panel-heading">
                             <div class="row">
@@ -339,7 +324,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-yellow">
                         <div class="panel-heading">
                             <div class="row">
@@ -354,7 +339,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-4 col-md-6">
                     <div class="panel panel-red">
                         <div class="panel-heading">
                             <div class="row">
@@ -521,7 +506,7 @@
 
         <script>
         
-      var myDataRef = new Firebase('https://phonelecture.firebaseio.com/');
+      var myDataRef = new Firebase('https://lectureoccurences.firebaseio.com/');
       myDataRef.on("value", function(snapshot) {
           var objects = snapshot.val();
           updatePhoneLectureGraphs(objects);
@@ -532,19 +517,20 @@
         
         $("#morris-donut-chart").empty();
         var dataList = [];
+        debugger;
         for (var index in objects) {
-            data = {};           
+            var data = {};           
             var found = 0;
             for (var dataIndex in dataList) {
                 if (dataList[dataIndex].label == objects[index].category) {
-                    dataList[dataIndex].views += objects[index].views;
+                    dataList[dataIndex].value = dataList[dataIndex].value + 1;
                     found = 1;
                     break;
                 }
             }
             if (!found) {
                 data['label'] = objects[index].category;
-                data['value'] = objects[index].views;
+                data['value'] = 1;
                 dataList.push(data);
             }            
         }
@@ -562,14 +548,14 @@
             var found = 0;
             for (var dataIndex in dataList) {
                 if (dataList[dataIndex].label == objects[index].language) {
-                    dataList[dataIndex].value += objects[index].views;
+                    dataList[dataIndex].value = dataList[dataIndex].value +1;
                     found = 1;
                     break;
                 }
             }
             if (!found) {
                 data['label'] = objects[index].language;
-                data['value'] = objects[index].views;
+                data['value'] = 1;
                 dataList.push(data);
             }            
         }
@@ -582,40 +568,40 @@
             hideHover: 'auto',
             resize: true
         });
-      };
 
-      var hostHistoryRef = new Firebase('https://hosthistory.firebaseio.com/');
-      hostHistoryRef.on("value", function(snapshot) {
-          var objects = snapshot.val();
-          updateHostHistoryGraphs(objects);
-        }, function (errorObject) {
-          console.log("The read failed: " + errorObject.code);
-      });
-      function updateHostHistoryGraphs(objects) {
+
         $("#morris-area-chart").empty();
         var hostList = [];
         var dataList = [];
         var viewsToday = 0;
+        debugger;
         for (var index in objects) {
             data = {};           
             var found = 0;
             for (var dataIndex in dataList) {
                 if (dataList[dataIndex].period == objects[index].date) {
-                    dataList[dataIndex][objects[index].host] = objects[index].views;
-                    found = 1;
-                    break;
+                    if (dataList[dataIndex][objects[index].host] > 0) {
+                        dataList[dataIndex][objects[index].host] = dataList[dataIndex][objects[index].host] + 1;
+                        found = 1;
+                        break;
+                    } else {
+                        dataList[dataIndex][objects[index].host] = 1;
+                        found = 1;
+                        break;
+                    }
+                    
                 }
             }
             if (!found) {
                 data['period'] = objects[index].date;
-                data[objects[index].host] = objects[index].views;
+                data[objects[index].host] = 1;
                 dataList.push(data);
             }
             if ($.inArray(objects[index].host, hostList) < 0) {
                 hostList.push(objects[index].host);
             }
-            if (objects[index].date == '2015-04-04') {
-                viewsToday += objects[index].views;
+            if (objects[index].date == '2015-04-05') {
+                viewsToday++;
             }
         }
         $("#lectures-today").html(viewsToday);
@@ -629,23 +615,7 @@
             hideHover: 'auto',
             resize: true
         });
-      }
-
-      var currentRef = new Firebase('https://locationvisits.firebaseio.com/');
-      currentRef.on("value", function(snapshot) {
-          var objects = snapshot.val();
-          updateCurrent(objects);
-        }, function (errorObject) {
-          console.log("The read failed: " + errorObject.code);
-      });
-
-      function updateCurrent(objects) {
-        var count = 0;
-        for (var object in objects) {
-            count += objects[object].population;
-        }
-        $("#current-calls").html(count);
-      }
+      };
 
       var logRef = new Firebase('https://notificationsyolo.firebaseio.com/');
       logRef.on("value", function(snapshot) {
@@ -669,8 +639,14 @@
             if(limit == 0) {
                 break;
             }
-            $("#notifications").append(createListItem(objects[object]));
-            limit--;
+            var dateThen = new Date(objects[object].time);
+            var dateNow = new Date();
+            var diff = dateNow - dateThen;
+            var minutes = Math.round(diff/1000/60);
+            if(minutes < 180) {
+                $("#notifications").append(createListItem(objects[object]));
+                limit--;
+            }
         }
       }
 
@@ -681,10 +657,10 @@
         var minutes = Math.round(diff/1000/60);
         if(object.activity == 'call') {
             newElem = $('<div class="list-group-item"><i class="fa fa-phone fa-fw"></i><span></span><span class="pull-right text-muted small"><em></em></span></div>')
-            callString = '  Call from ' + object.city;
+            callString = '  Call > ' + object.city;
         } else {
             newElem = $('<div class="list-group-item"><i class="fa fa-book fa-fw"></i><span></span><span class="pull-right text-muted small"><em></em></span></div>')
-            callString = '  Lecture from ' + object.city;
+            callString = '  Lecture > ' + object.city;
         }
         $(newElem.children()[1]).append(callString);
         $(newElem.children()[2]).children().html(minutes + ' minutes ago')
