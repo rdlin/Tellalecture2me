@@ -345,16 +345,23 @@
     </div>
     <!-- /#wrapper -->
        <script>
-         var locationRef = new Firebase("https://locationvisits.firebaseio.com/");
+         var locationRef = new Firebase("https://lectureoccurences.firebaseio.com/");
          locationRef.on('value', function(snapshot) {
 
            var objects = snapshot.val();
            for (city in objects) {
+            if (objects[city]['date'] == '2015-04-05' ) {
+              if (citymap[objects[city]['city']]) 
+               citymap[objects[city]['city']]['population'] = citymap[objects[city]['city']]['population'] + 1;  
+              else 
+              {
              citymap[objects[city]['city']] = {
              center: new google.maps.LatLng(objects[city]['la'], objects[city]['lo']),
-             population: objects[city]['population']
+             population: 1
             };
+          }
            }
+         }
    initialize();
           });
     </script>
