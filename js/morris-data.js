@@ -79,36 +79,17 @@ $(function() {
     Morris.Bar({
         element: 'morris-bar-chart',
         data: [{
-            y: '2006',
-            a: 100,
-            b: 90
+            y: 'asdfgh',
+            a: 100
         }, {
-            y: '2007',
-            a: 75,
-            b: 65
+            y: 'asdfghjkl;',
+            a: 75
         }, {
-            y: '2008',
-            a: 50,
-            b: 40
-        }, {
-            y: '2009',
-            a: 75,
-            b: 65
-        }, {
-            y: '2010',
-            a: 50,
-            b: 40
-        }, {
-            y: '2011',
-            a: 75,
-            b: 65
-        }, {
-            y: '2012',
-            a: 100,
-            b: 90
+            y: 'asdf',
+            a: 50
         }],
         xkey: 'y',
-        ykeys: ['a', 'b'],
+        ykeys: ['a'],
         labels: ['Series A', 'Series B'],
         hideHover: 'auto',
         resize: true

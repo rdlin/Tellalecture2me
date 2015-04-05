@@ -643,7 +643,7 @@
             var dateNow = new Date();
             var diff = dateNow - dateThen;
             var minutes = Math.round(diff/1000/60);
-            if(minutes < 180) {
+            if(minutes < 100) {
                 $("#notifications").append(createListItem(objects[object]));
                 limit--;
             }
